@@ -2,6 +2,10 @@
 import pygame
 import random
 from pygame.locals import *
+#adicionais
+import math
+import tkinter as tk
+from tkinter import messagebox
 #funções auxiliares
 def on_grid_random():
     x = random.randint(0,590)
@@ -18,32 +22,44 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-pygame.init() #dados tela
+Space = False #
+
+#dados tela
+pygame.init() 
 screen = pygame.display.set_mode((600, 600))
 pygame.display.set_caption('Snake')
 
-snake = [(200, 200), (210, 200), (220, 200)] #dados cobra
+#dados cobra
+snake = [(200, 200), (210, 200), (220, 200)] 
 snake_skin = pygame.Surface((10,10))
 snake_skin.fill((75,0,130))
 
-apple_pos = on_grid_random() #dados maçã
+#dados maçã
+apple_pos = on_grid_random() 
 apple = pygame.Surface((10,10))
 apple.fill((255,0,0))
 
-my_direction = LEFT #direção inicial
+#direção inicial
+my_direction = LEFT 
 
-clock = pygame.time.Clock() #define tempo
+#define tempo
+clock = pygame.time.Clock() 
 
-font = pygame.font.Font('freesansbold.ttf', 18)
+font = pygame.font.Font('freesansbold.ttf', 18) #fonte ponto
 score = 0
-
+font = pygame.font.Font('freesansbold.ttf', 18) #fonte highscore
+highscore = 0
+    
 game_over = False
 while not game_over: #AVISO MECHER NO NOT game_over!!!!!!!!!!!! ver linha 109
     clock.tick(10) #VELOCIDADE (arrumar a velocidade para 20 depois)
     for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            exit()
+        #if event.type == QUIT:
+            #pygame.quit()
+
+            #exit()
+            #for game_over = True:
+            #    do 
    
 #locomoção (simbolo != significa diferente) e nesse caso impede a 
 #cobra de ir na direção oposta passando por ela mesma 
@@ -61,11 +77,19 @@ while not game_over: #AVISO MECHER NO NOT game_over!!!!!!!!!!!! ver linha 109
         apple_pos = on_grid_random()
         snake.append((0,0))
         score = score +1
+
+    #highscore
+    if highscore < score:
+        highscore = score
            
-    #verifica se a cobra colide com a parede e se colidir game over
+    ##verifica se a cobra colide com a parede e se colidir game over
     if snake[0][0] == 600 or snake[0][1] == 600 or snake[0][0] < 0 or snake[0][1] < 0:
         game_over = True
         break
+
+    #tela infinia
+    #for i in range(1, len(snake) - 1):
+
 
     #checa se a cobra colidiu com ela mesma 
     for i in range(1, len(snake) - 1):
@@ -73,8 +97,8 @@ while not game_over: #AVISO MECHER NO NOT game_over!!!!!!!!!!!! ver linha 109
             game_over = True
             break
 
-    if game_over:
-        break
+    #if game_over: #PROVISORIO
+        #break
 
     for i in range(len(snake) - 1, 0, -1):# cobra corpo
         snake[i] = (snake[i-1][0], snake[i-1][1])
@@ -102,6 +126,12 @@ while not game_over: #AVISO MECHER NO NOT game_over!!!!!!!!!!!! ver linha 109
     score_rect = score_font.get_rect()
     score_rect.topleft = ( 600 -120, 10)
     screen.blit(score_font, score_rect)
+    
+    #melhor pontução ----- INCOMPLETO
+    highscore_font = font.render('High Score: %s' % (highscore), True, (255, 255, 255))
+    highscore_rect = highscore_font.get_rect()
+    highscore_rect.topright = ( 130, 10)
+    screen.blit(highscore_font, highscore_rect)
 
     for pos in snake: 
         screen.blit(snake_skin,pos)
@@ -114,10 +144,24 @@ while True:
     game_over_rect = game_over_screen.get_rect()
     game_over_rect.midtop = (600 / 2, 10)
     screen.blit(game_over_screen, game_over_rect)
+    #
+    continue_font = pygame.font.Font('freesansbold.ttf', 25)
+    game_over_screen = continue_font.render('pressione espaço para tentar de novo', True, (255, 0, 0))
+    continue_rect = game_over_screen.get_rect()
+    continue_rect.midbottom =(300, 500)
+    screen.blit(game_over_screen, continue_rect)
     pygame.display.update()
     pygame.time.wait(500)
-    while True:
-       for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            exit() 
+    #
+
+    while game_over == True:
+        for event in pygame.event.get():
+            #if event.type == QUIT: #tava atrapalhando o codigo aparentemente!!
+                if event.type == KEYDOWN: #recomeçar jogo (incompleto)
+                    if event.key == K_SPACE:
+                        game_over == False
+                        
+                        #break        
+                pygame.quit()#n mecher aqui se n o jogo n fecha 
+                exit()#
+        pass
